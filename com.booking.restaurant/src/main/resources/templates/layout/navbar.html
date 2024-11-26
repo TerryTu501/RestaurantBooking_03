@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org/">
+<head>
+<meta charset="UTF-8">
+<title></title>
+<!-- Thymeleaf 是 Spring Boot 中常用的模板引擎，用來在服務器端渲染動態頁面。-->
+<!-- /css/bootstrap.min.css：這是一個相對路徑，表示在應用的 css 目錄下的 bootstrap.min.css 文件，這個文件包含了 Bootstrap 的壓縮版 CSS 樣式。 -->
+<!-- rel="stylesheet"：標記這個鏈接是樣式表，用於加載頁面的 CSS 樣式。 -->
+<!-- 意義：這段程式碼用來在 HTML 頁面中引入 Bootstrap CSS 文件，使頁面能夠使用 Bootstrap 的樣式進行排版和布局。 -->
+<link th:href="@{/css/bootstrap.min.css}" rel="stylesheet" />
+</head>
+<body>
+
+<nav class="navbar navbar-expand-lg bg-light">
+  <div class="container-fluid">
+	<!-- 「首頁」連結只在使用者已登入時顯示 -->
+	<a th:if="${session.loginUserId != null}" class="navbar-brand" th:href="@{/user/index}">餐廳管理系統</a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+    </button>
+		
+			<div class="collapse navbar-collapse" id="navbarNav">
+		    <ul class="navbar-nav">
+			       <!-- 如果已登入，顯示新增資料、上傳檔案、登出 -->
+			<li th:if="${session.loginUserId != null}" class="nav-item">			
+				  	 <div class="dropdown">
+				     <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">餐廳管理</button>
+				     	<ul class="dropdown-menu">
+				       <li><a class="dropdown-item" th:href="@{/restaurant/manage}">顯示所有餐廳</a></li> <!--<a class="nav-link" th:href="@{/user/restaurant}">餐廳管理</a>-->						  	 
+					    <li><a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#addRestaurantModal">新增餐廳</a>  </li><!-- Trigger Modal for Adding a New Restaurant -->
+				     	</ul>
+				   </div>
+		   </li>
+		   <li th:if="${session.loginUserId != null}" class="nav-item">
+					 <div class="dropdown">
+					  <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">訂位管理</button>
+					  	<ul class="dropdown-menu">
+					    <li><a class="dropdown-item" th:href="@{/restaurant/manage}">查看所有訂位</a></li> 
+
+					  	</ul>
+					</div>
+		   </li>
+		   <li th:if="${session.loginUserId != null}" class="nav-item">
+					 <div class="dropdown">
+					  <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">客戶管理</button>
+					  	<ul class="dropdown-menu">
+					    <li><a class="dropdown-item" th:href="@{/restaurant/manage}">顯示所有客戶</a></li> 
+
+					  	</ul>
+					</div>
+		   </li>
+		   <li th:if="${session.loginUserId != null}" class="nav-item">
+					 <div class="dropdown">
+					  <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">報表分析</button>
+					  	<ul class="dropdown-menu">
+					    <li><a class="dropdown-item" th:href="@{/restaurant/manage}">銷售報表</a></li> 					  	 
+  						<li><a class="dropdown-item" th:href="@{/restaurant/manage}">客流分析</a></li> 
+					  	</ul>
+					</div>
+		   </li>			
+		   <li th:if="${session.loginUserId != null}" class="nav-item">
+					 <div class="dropdown">
+					  <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">通知中心</button>
+					  	<ul class="dropdown-menu">
+					    <li><a class="dropdown-item" th:href="@{/restaurant/manage}">系統通知</a></li> 					  	 
+  						<li><a class="dropdown-item" th:href="@{/restaurant/manage}">客戶訊息</a></li> 
+					  	</ul>
+					</div>
+		   </li>		
+		   <li th:if="${session.loginUserId != null}" class="nav-item">
+		       <a class="nav-link" th:href="@{/user/logout}">登出</a>
+		   </li>
+	     </ul>
+	   </div>
+  </div>
+</nav>
+<!-- 意義：這段程式碼用來在 HTML 頁面中引入 Bootstrap 的 JavaScript 文件，這個文件包含了如彈出框、動態導航欄等 Bootstrap 提供的前端功能和交互效果。 -->
+<script th:src="@{/js/bootstrap.bundle.min.js}"></script>
+</body>
+</html>

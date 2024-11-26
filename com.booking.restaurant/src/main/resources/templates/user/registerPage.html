@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org/">
+<head>
+<meta charset="UTF-8">
+<title>註冊</title>
+
+<style>
+
+	.top-margin {
+			            margin-top: 20px; /* 自定義上方間距，可根據需求調整 */
+			}
+</style>
+
+</head>
+<body>
+<div th:replace="~{layout/navbar}"></div>
+
+<div class="container">
+  <div class="row justify-content-center">
+ 	 <div class="col col-8 col-md-4">
+    
+	<h1 class="top-margin">註冊</h1>
+    <form th:action="@{/user/registerPost}" method="post">
+      <div class="mb-3">
+        		<label for="inputEmail" class="form-label">帳號</label>
+        		<input type="text" class="form-control" name="uname" id="inputUName" aria-describedby="emailHelp">
+      </div>
+	  <div class="mb-3">
+	         	 <label for="inputPassword" class="form-label">密碼</label>
+	          	<input type="password" class="form-control" name="pwd" id="inputPassword"  aria-describedby="emailHelp">
+	        </div>
+	  <div class="mb-3">
+	          <label for="inputEmail" class="form-label">信箱</label>
+	          <input type="text" class="form-control" name="mail" id="inputEmail" aria-describedby="emailHelp">
+	  </div>    
+	  <div class="mb-3">
+	   		 <label for="inputPhoneNumber" class="form-label">電話號碼</label>
+	    	<input type="text" class="form-control" name="pnum" id="inputPNumber"  aria-describedby="emailHelp">
+	  </div	>	   	  
+	  <div class="mb-3">
+	    	<label for="selectUserType" class="form-label">使用者類型</label>
+		<select class="form-control" name="utype" id="inputUType" aria-describedby="emailHelp">
+		        <option value="customer">Customer</option>
+		        <option value="restaurant_owner">Restaurant Owner</option>
+		        <option value="admin">Admin</option>
+		  </select>  
+	  </div>     
+      <button type="submit" class="btn btn-primary">送出</button>
+       <div th:if="${errorMsg != null}" style="color: red; text-align: center;">
+	   	<p th:text="${errorMsg}"></p>
+	   </div>
+    </form>
+	
+   </div>
+  </div>
+</div>
+
+</body>
+</html>

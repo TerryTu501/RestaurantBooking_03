@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org/">
+<head>
+<meta charset="UTF-8">
+<title>登入</title>
+<style>
+	        .top-margin {
+	            margin-top: 30px; /* 自定義上方間距，可根據需求調整 */
+	        }
+	        
+			/* 訊息彈出視窗樣式 */
+					   .notification {
+					       position: fixed;
+					       top: 10px;
+					       left: 50%;
+					       transform: translateX(-50%);
+					       background-color: rgb(23, 198, 111); /* 成功訊息的背景色 */
+					       color: white;
+					       padding: 10px 20px;
+					       border-radius: 5px;
+					       font-size: 16px;
+					       opacity: 0;
+					       transition: opacity 0.5s ease;
+					       z-index: 1000;
+					   }
+
+					   .notification.error {
+					       background-color: #f44336; /* 失敗訊息的背景色 */
+					   }
+
+					   /* 顯示訊息時的透明度 */
+					   .notification.show {
+					       opacity: 2;
+					   }		 
+					   
+					   .top-margin {
+							margin-top: 20px;
+					   }
+</style>
+</head>
+<body>
+<div th:replace="~{layout/navbar}"></div>
+<!-- 訊息彈出視窗 -->
+<div id="notification" class="notification" th:classappend="${notificationType} == 'error' ? 'error' : ''"  th:text="${message}"></div>
+
+	<div class="container top-margin">
+		<div class="row justify-content-center">
+	 	<div class="col col-8 col-md-4">
+		<h1>登入</h1>		
+				
+		<form th:action="@{/user/login}" method="post">
+			  <div class="mb-3">
+				    <label for="InputEmail" class="form-label">帳號</label>
+				    <input type="text" name="uname" class="form-control" id="InputEmail" aria-describedby="emailHelp">
+			  </div>
+			  <div class="mb-3">
+				    <label for="InputPassword" class="form-label">密碼</label>
+				    <input type="password" name="pwd" class="form-control" id="InputPassword">
+			  </div>
+			  <button type="submit" class="btn btn-primary">送出</button>
+			  <div th:if="${errorMsg != null}" style="color: red; text-align: center;">
+	          <p th:text="${errorMsg}"></p>
+	    </div>
+		<div class="mt-3">
+			<a th:href="@{/user/registerPage}" class="btn btn-link">還沒有帳號？請點此註冊</a>
+		</div>
+	     <!-- 新增的註冊連結 -->	    
+		</form>	
+
+			</div>
+			</div>
+		</div>
+		
+		<script>
+		    // 檢查是否有訊息需要顯示
+		    document.addEventListener("DOMContentLoaded", function() {
+		        const notification = document.getElementById("notification");
+		        if (notification.textContent.trim() !== "") {
+		            // 顯示訊息
+		            notification.classList.add("show");
+
+		            // 3秒後自動隱藏
+		            setTimeout(() => {
+		                notification.classList.remove("show");
+		            }, 3000);
+		        }
+		    });
+		</script>
+		
+</body>
+</html>

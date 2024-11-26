@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" 
+xmlns:xsi="https://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>org.springframework.boot</groupId>
+		<artifactId>spring-boot-starter-parent</artifactId>
+		<version>3.2.11</version>
+		<relativePath/> <!-- lookup parent from repository -->
+	</parent>
+	<groupId>com.booking.restaurant</groupId>
+	<artifactId>com.booking.restaurant</artifactId>
+	<version>0.0.1-SNAPSHOT</version>
+	<name>com.booking.restaurant</name>
+	<description>Final project with Team</description>
+	<url/>
+	<licenses>
+		<license/>
+	</licenses>
+	<developers>
+		<developer/>
+	</developers>
+	<scm>
+		<connection/>
+		<developerConnection/>
+		<tag/>
+		<url/>
+	</scm>
+	<properties>
+		<java.version>17</java.version>
+	</properties>	
+	<dependencies>				
+<!--			郵件功能(取消訂位通知&評論回覆通知)-->
+			<dependency>
+			    <groupId>org.springframework.boot</groupId>
+			    <artifactId>spring-boot-starter-mail</artifactId>
+			</dependency>
+<!--			JWT驗證功能所需函示庫-->
+			<dependency>
+				<groupId>com.nimbusds</groupId>
+				<artifactId>nimbus-jose-jwt</artifactId>
+				<version>9.47</version>
+			</dependency>				
+			<!--####<<不使用>>加密方法:https://mvnrepository.com/artifact/org.springframework.security/spring-security-crypto####-->
+<!--			<dependency>-->
+<!--				<groupId>org.springframework.security</groupId>-->
+<!--				<artifactId>spring-security-crypto</artifactId>-->
+<!--			</dependency>-->
+<!--	####Spring Security(不使用) 默認行為:Spring Security 會自動生成一個隨機密碼，並將其打印在控制台上，用於您在開發期間的登錄。 		-->
+<!--		<dependency>-->
+<!--		    <groupId>org.springframework.boot</groupId>-->
+<!--		    <artifactId>spring-boot-starter-security</artifactId>-->
+<!--		</dependency>	-->								
+				
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-data-jpa</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-thymeleaf</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-web</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-devtools</artifactId>
+			<scope>runtime</scope>
+			<optional>true</optional>
+		</dependency>
+		<dependency>
+			<groupId>com.microsoft.sqlserver</groupId>
+			<artifactId>mssql-jdbc</artifactId>
+			<scope>runtime</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-configuration-processor</artifactId>
+			<optional>true</optional>
+		</dependency>
+		
+		<dependency>
+			<groupId>org.projectlombok</groupId>
+			<artifactId>lombok</artifactId>
+			<optional>true</optional>
+		</dependency>
+		
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-test</artifactId>
+			<scope>test</scope>
+		</dependency>
+	
+	</dependencies>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.hibernate.orm.tooling</groupId>
+				<artifactId>hibernate-enhance-maven-plugin</artifactId>
+				<version>${hibernate.version}</version>
+				<executions>
+					<execution>
+						<id>enhance</id>
+						<goals>
+							<goal>enhance</goal>
+						</goals>
+						<configuration>
+							<enableLazyInitialization>true</enableLazyInitialization>
+							<enableDirtyTracking>true</enableDirtyTracking>
+							<enableAssociationManagement>true</enableAssociationManagement>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.graalvm.buildtools</groupId>
+				<artifactId>native-maven-plugin</artifactId>
+			</plugin>
+			<plugin>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-maven-plugin</artifactId>
+				<configuration>
+					<excludes>
+						<exclude>
+							<groupId>org.projectlombok</groupId>
+							<artifactId>lombok</artifactId>
+						</exclude>
+					</excludes>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+
+</project>

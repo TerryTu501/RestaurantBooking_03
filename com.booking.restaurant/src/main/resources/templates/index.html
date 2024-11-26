@@ -1,0 +1,530 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+    <title>餐廳管理系統</title>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+	<style>
+	        body {
+	            background-color: #F9F9F9;
+	            font-family: 'Arial', sans-serif;
+	        }
+
+	        h1 {
+	            color: #009393;
+	            font-family: 'Arial', sans-serif;
+	            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+	            text-align: center;
+	            margin-top: 20px;
+	        }
+
+	        .form-container {
+	            margin: 20px auto;
+	            text-align: center;
+	        }
+
+	        .custom-table {
+	            width: 90%;
+	            margin: 20px auto;
+	            border-collapse: collapse;
+	            background-color: #ffffff;
+	            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+	            border-radius: 5px;
+	            overflow: hidden;
+	        }
+
+	        .custom-table th {
+	            background-color: #009393;
+	            color: #ffffff;
+	            padding: 12px;
+	            text-align: center;
+	        }
+
+	        .custom-table td {
+	            padding: 10px;
+	            text-align: center;
+	            border-bottom: 1px solid #dddddd;
+	        }
+
+	        .custom-table tr:nth-child(even) {
+	            background-color: #f2f2f2;
+	        }
+
+	        .custom-table tr:hover {
+	            background-color: #e6f7f7;
+	        }
+
+			.btn {
+			           padding: 6px 12px;
+			           border-radius: 4px;
+			       }
+
+	       .btn-secondary {
+	           background-color: #6c757d;
+	           color: white;
+	       }
+
+	       .btn-primary {
+	           background-color: #007bff;
+	           color: white;
+	       }
+
+	        .btn-secondary:hover {
+	            background-color: #5a6268;
+	        }
+
+	        .btn-danger {
+	            background-color: rgb(255, 128, 128);
+	            color: white;
+	        }
+			.btn-warning {
+			    color: white; /* 設定「管理菜單」按鈕文字顏色為白色 */
+			}
+
+			.btn-info {
+			    color: white; /* 設定「座位配置」按鈕文字顏色為白色 */
+			}
+
+			form {
+			    display: inline; /* 讓所有按鈕水平排列 */
+			}
+
+	        .btn-danger:hover {
+	            background-color: rgb(255, 128, 128);
+	        }
+
+	        .btn-primary:hover {
+	            background-color: #0056b3;
+	        }
+			
+			.top-margin {
+				margin: 20px;
+			}
+	 </style>
+</head>
+<body>
+<div th:replace="~{layout/navbar}"></div>
+
+    <!-- 訊息彈出視窗 -->
+    <div id="notification" class="notification" th:classappend="${notificationType} == 'error' ? 'error' : ''" th:text="${message}"></div>		
+
+    <h1 class="top-margin">您的餐廳</h1>
+	<!-- 新增餐廳 :  Modal 結構 --> 
+	<div class="modal fade" id="addRestaurantModal" tabindex="-1" aria-labelledby="addRestaurantModalLabel" aria-hidden="true">
+		     <div class="modal-dialog">
+		         <div class="modal-content">
+		             <div class="modal-header">
+		                 <h5 class="modal-title" id="addRestaurantModalLabel">新增餐廳</h5>
+		                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+		             </div>
+					 <div class="modal-body">
+					     <form id="addRestaurantForm" th:action="@{/restaurant/add}" method="post">
+					         <div class="mb-3">
+					             <label for="name" class="form-label">餐廳名稱</label>
+					             <input type="text" class="form-control" id="name" name="name" required>
+					         </div>
+					         <div class="mb-3">
+					             <label for="address" class="form-label">餐廳地址</label>
+					             <input type="text" class="form-control" id="address" name="address" required>
+					         </div>
+					         <div class="mb-3">
+					             <label for="phoneNumber" class="form-label">電話號碼</label>
+					             <input type="text" class="form-control" id="phoneNumber" name="phoneNumber" required>
+					         </div>
+					         <div class="mb-3">
+					             <label for="cuisineType" class="form-label">菜品種類</label>
+								 <select class="form-select" id="cuisineType" name="cuisineType" required>
+								                             <option value="義式">義式</option>
+								                             <option value="日式">日式</option>
+								                             <option value="中式">中式</option>
+								                             <option value="美式">美式</option>
+								                             <!-- 根據您的資料表來新增選項 -->
+								                         </select>
+					         </div>
+							 <!-- 將“餐廳簡介”改成文字區域 -->
+							 <div class="mb-3">
+							     <label for="description" class="form-label">餐廳簡介</label>
+							     <textarea class="form-control" id="description" name="description" rows="4" placeholder="專業美式餐廳，提供優質的用餐體驗，特色料理包含多種經典菜色" required></textarea>
+							 </div>				 
+					         <div class="mb-3">
+					             <label for="openingHours" class="form-label">營運時間</label>
+										 <select class="form-select" id="openingHours" name="openingHours" required>
+										     <option value='{"weekday": "11:00-21:00", "weekend": "11:00-22:00"}'>平日 11:00-21:00，週末 11:00-22:00</option>
+										     <!-- 根據您的資料表來新增選項 -->
+										 </select>
+					         </div>
+					         <div class="mb-3">
+					             <label for="status" class="form-label">當前狀態</label>
+										 <select class="form-select" id="status" name="status" required>
+										     <option value="active">營運中</option>
+										     <option value="inactive">未營運</option>
+										     <option value="pending">待審核</option>
+										     <!-- 根據您的資料表來新增選項 -->
+										 </select>
+					         </div>
+					         <div class="mb-3">
+					             <label for="priceRange" class="form-label">價格區間</label>
+								 <select class="form-select" id="priceRange" name="priceRange" required>
+								     <option value="low">低</option>
+								     <option value="medium">中</option>
+								     <option value="high">高</option>
+								     <option value="luxury">奢華</option>
+								     <!-- 根據您的資料表來新增選項 -->
+								 </select>
+					         </div>
+					         <div class="mb-3">
+					             <label for="area" class="form-label">所在地區</label>
+								 <select class="form-select" id="area" name="area" required>
+								     <option value="新北">新北</option>
+								     <option value="台北">台北</option>
+								     <option value="台中">台中</option>
+								     <option value="高雄">高雄</option>
+								     <!-- 根據您的資料表來新增選項 -->
+								 </select>
+					         </div>
+							 <!-- 將“適合人群”設為可複選的下拉選單 -->
+							 <div class="mb-3">
+							     <label class="form-label">適合人群</label>
+							     <div>
+							         <label class="form-check-label">
+							             <input class="form-check-input" type="checkbox" name="suitableFor" value="單人"> 單人
+							         </label>
+							         <label class="form-check-label">
+							             <input class="form-check-input" type="checkbox" name="suitableFor" value="約會"> 約會
+							         </label>
+							         <label class="form-check-label">
+							             <input class="form-check-input" type="checkbox" name="suitableFor" value="家庭"> 家庭
+							         </label>
+							         <label class="form-check-label">
+							             <input class="form-check-input" name="suitableFor" type="checkbox" value="團體"> 團體
+							         </label>
+							         <label class="form-check-label">
+							             <input class="form-check-input" type="checkbox" name="suitableFor" value="商務"> 商務
+							         </label>
+							     </div>
+							     <small class="form-text text-muted">選擇適合的用餐人群。</small>
+
+							     <!-- 顯示選擇的結果 -->
+							     <div class="mt-2">
+							         <label class="form-label">已選擇：</label>
+							         <div id="selectedOptions" class="form-control" style="height: auto;"></div>
+							     </div>
+							 </div>
+							 
+					         <button type="submit" class="btn btn-success">送出</button>
+					     </form>
+					 </div>
+		         </div>
+		     </div>
+		 </div>
+
+	<!-- 編輯餐廳 Modal 結構 -->
+	<div class="modal fade" id="editRestaurantModal" tabindex="-1" aria-labelledby="editRestaurantModalLabel" aria-hidden="true">
+	    <div class="modal-dialog">
+	        <div class="modal-content">
+	            <div class="modal-header">
+	                <h5 class="modal-title" id="editRestaurantModalLabel">編輯餐廳</h5>
+	                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+	            </div>
+	            <div class="modal-body">
+	                <form id="editRestaurantForm" th:action="@{/restaurant/edit}" method="post">
+	                    <input type="hidden" id="restaurantId" name="restaurantId">
+	                    <div class="mb-3">
+	                        <label for="editName" class="form-label">餐廳名稱</label>
+	                        <input type="text" class="form-control" id="editName" name="name" required>
+	                    </div>
+	                    <div class="mb-3">
+	                        <label for="editAddress" class="form-label">餐廳地址</label>
+	                        <input type="text" class="form-control" id="editAddress" name="address" required>
+	                    </div>
+	                    <div class="mb-3">
+	                        <label for="editPhoneNumber" class="form-label">電話號碼</label>
+	                        <input type="text" class="form-control" id="editPhoneNumber" name="phoneNumber" required>
+	                    </div>
+	                    <div class="mb-3">
+	                        <label for="editCuisineType" class="form-label">菜品種類</label>
+	                        <select class="form-select" id="editCuisineType" name="cuisineType" required>
+	                            <option value="義式">義式</option>
+	                            <option value="日式">日式</option>
+	                            <option value="中式">中式</option>
+	                            <option value="美式">美式</option>
+	                            <!-- 根據您的資料表來新增選項 -->
+	                        </select>
+	                    </div>
+	                    <div class="mb-3">
+	                        <label for="editDescription" class="form-label">餐廳簡介</label>
+	                        <textarea class="form-control" id="editDescription" name="description" rows="4" required></textarea>
+	                    </div>
+	                    <div class="mb-3">
+	                        <label for="editOpeningHours" class="form-label">營運時間</label>
+	                        <select class="form-select" id="editOpeningHours" name="openingHours" required>
+	                            <option value='{"weekday": "11:00-21:00", "weekend": "11:00-22:00"}'>平日 11:00-21:00，週末 11:00-22:00</option>
+	                            <!-- 根據您的資料表來新增選項 -->
+	                        </select>
+	                    </div>
+	                    <div class="mb-3">
+	                        <label for="editStatus" class="form-label">當前狀態</label>
+	                        <select class="form-select" id="editStatus" name="status" required>
+	                            <option value="active">營運中</option>
+	                            <option value="inactive">未營運</option>
+	                            <option value="pending">待審核</option>
+	                            <!-- 根據您的資料表來新增選項 -->
+	                        </select>
+	                    </div>
+	                    <div class="mb-3">
+	                        <label for="editPriceRange" class="form-label">價格區間</label>
+	                        <select class="form-select" id="editPriceRange" name="priceRange" required>
+	                            <option value="low">低</option>
+	                            <option value="medium">中</option>
+	                            <option value="high">高</option>
+	                            <option value="luxury">奢華</option>
+	                            <!-- 根據您的資料表來新增選項 -->
+	                        </select>
+	                    </div>
+	                    <div class="mb-3">
+	                        <label for="editArea" class="form-label">所在地區</label>
+	                        <select class="form-select" id="editArea" name="area" required>
+	                            <option value="新北">新北</option>
+	                            <option value="台北">台北</option>
+	                            <option value="台中">台中</option>
+	                            <option value="高雄">高雄</option>
+	                            <!-- 根據您的資料表來新增選項 -->
+	                        </select>
+	                    </div>
+	                    <div class="mb-3">
+	                        <label class="form-label">適合人群</label>
+	                        <div>
+	                            <label class="form-check-label">
+	                                <input class="form-check-input" type="checkbox" name="suitableFor" value="單人" id="suitableForSingle"> 單人
+	                            </label>
+	                            <label class="form-check-label">
+	                                <input class="form-check-input" type="checkbox" name="suitableFor" value="約會" id="suitableForDate"> 約會
+	                            </label>
+	                            <label class="form-check-label">
+	                                <input class="form-check-input" type="checkbox" name="suitableFor" value="家庭" id="suitableForFamily"> 家庭
+	                            </label>
+	                            <label class="form-check-label">
+	                                <input class="form-check-input" type="checkbox" name="suitableFor" value="團體" id="suitableForGroup"> 團體
+	                            </label>
+	                            <label class="form-check-label">
+	                                <input class="form-check-input" type="checkbox" name="suitableFor" value="商務" id="suitableForBusiness"> 商務
+	                            </label>
+	                        </div>
+	                        <small class="form-text text-muted">選擇適合的用餐人群。</small>
+	                    </div>
+	                    <button type="submit" class="btn btn-primary">保存變更</button>
+	                </form>
+	            </div>
+	        </div>
+	    </div>
+	</div>
+
+		 
+<!--	查詢功能	-->
+    <div class="form-container" style="margin-bottom:10px">
+        <form th:action="@{/search}" method="get">
+            <input type="hidden" name="page" value="1">
+            <input type="text" name="searchKeyword" placeholder="輸入關鍵字" th:value="${searchKeyword}">
+            <button type="submit" class="search-button">查詢</button>
+        </form>
+    </div>	
+	
+<!--	顯示餐廳資料-->
+	<table  border="1" style="text-align: center" class="custom-table">	
+			<thead>
+			    <tr>
+			        <th>餐廳名稱</th>
+			        <th>餐廳地址</th>
+			        <th>餐廳電話</th>
+			        <th>菜品種類</th>
+					<th>餐廳簡介</th>
+			        <th>營運時間</th>
+					<th>當前狀態</th>
+					<th>價格區間</th>
+					<th>所在地區</th>
+					<th>適合人群</th>
+					<th>評分</th>
+					<th>評論數</th>
+					<th>操作</th>
+			    </tr>
+			</thead>
+			<tbody>
+               <tr th:each="restaurant : ${restaurants}">
+                   <td th:text="${restaurant.name}"></td>
+                   <td th:text="${restaurant.address}"></td>
+                   <td th:text="${restaurant.phoneNumber}"></td>
+                   <td th:text="${restaurant.cuisineType}"></td>
+				   <td th:text="${restaurant.description}"></td>
+				   <td th:text="${restaurant.openingHours}"></td>
+				   <td th:text="${restaurant.status}"></td>
+				   <td th:text="${restaurant.priceRange}"></td>
+				   <td th:text="${restaurant.area}"></td>
+				   <td th:text="${restaurant.suitableFor}"></td>
+				   <td th:text="${restaurant.averageRating}"></td>
+				   <td th:text="${restaurant.totalReviews}"></td>				   
+                   <td>
+					<!-- 編輯按鈕，觸發編輯 Modal 並傳遞餐廳數據 -->
+					<button class="btn btn-secondary" 
+					        data-bs-toggle="modal" 
+					        data-bs-target="#editRestaurantModal"
+					        data-restaurant-id="${restaurant.restaurantId}"
+					        data-name="${restaurant.name}"
+					        data-address="${restaurant.address}"
+					        data-phone-number="${restaurant.phoneNumber}"
+					        data-cuisine-type="${restaurant.cuisineType}"
+					        data-description="${restaurant.description}"
+					        data-opening-hours="${restaurant.openingHours}"
+					        data-status="${restaurant.status}"
+					        data-price-range="${restaurant.priceRange}"
+					        data-area="${restaurant.area}"
+					        data-suitable-for="${restaurant.suitableFor}"
+					        onclick="loadRestaurantData(this)">
+					    編輯
+					</button>
+	                <!-- 刪除按鈕（保持不變） -->
+	                <form th:action="@{/restaurant/delete/{id}(id=${restaurant.restaurantId})}" method="post" style="display:inline;" onsubmit="return confirm('確定要刪除此餐廳嗎？');">
+	                    <!-- 刪除按鈕，使用 SweetAlert 來顯示確認和成功提示 -->
+						<button class="btn btn-danger">刪除</button>
+	                </form>
+					<!-- 管理菜單按鈕 -->
+					<form th:action="@{/restaurant/delete/{id}(id=${restaurant.restaurantId})}" method="post" style="display:inline;">
+					    <button type="submit" class="btn btn-warning text-white">管理菜單</button>
+					</form>
+					<!-- 座位配置按鈕 -->
+					<form th:action="@{/restaurant/delete/{id}(id=${restaurant.restaurantId})}" method="post" style="display:inline;">
+					    <button type="submit" class="btn btn-info text-white">座位配置</button>
+					</form>						
+                   </td>
+               </tr>
+           </tbody>
+	 </table>
+	 			
+	<!-- 分頁功能，僅在有資料時顯示 -->
+<!--	<div class="pagination" th:if="${venuePage != null and venuePage.totalElements > 0}">-->
+<!--	    <ul class="pagination">-->
+<!--	        <th:block th:switch="${venuePage.number + 1 == 1}">-->
+<!--	            <li th:case="${false}" class="page-item"><a class="page-link" th:href="@{/venues(page=${venuePage.number}, searchKeyword=${searchKeyword})}"><</a></li>-->
+<!--	            <li th:case="${true}" class="page-item disabled"><a class="page-link"><</a></li>-->
+<!--	        </th:block>-->
+
+<!--	        <th:block th:each="onePageNum : ${#numbers.sequence(1, venuePage.totalPages)}">-->
+<!--	            <th:block th:switch="${onePageNum == venuePage.number + 1}">-->
+<!--	                <li class="page-item active"><span class="page-link" th:case="${true}" th:text="${onePageNum}"></span></li>-->
+<!--	                <li class="page-item"><a class="page-link" th:case="${false}" th:href="@{/venues(page=${onePageNum}, searchKeyword=${searchKeyword})}">[[${onePageNum}]]</a></li>-->
+<!--	            </th:block>-->
+<!--	        </th:block>-->
+
+<!--	        <th:block th:switch="${venuePage.number + 1 == venuePage.totalPages}">-->
+<!--	            <li th:case="${false}" class="page-item"><a class="page-link" th:href="@{/venues(page=${venuePage.number + 2}, searchKeyword=${searchKeyword})}">></a></li>-->
+<!--	            <li th:case="${true}" class="page-item disabled"><a class="page-link">></a></li>-->
+<!--	        </th:block>-->
+<!--	    </ul>-->
+<!--	</div>-->
+	 
+	<script>
+    // 彈出視窗: 檢查是否有訊息需要顯示	 
+    document.addEventListener("DOMContentLoaded", function() {
+        const notification = document.getElementById("notification");
+        if (notification.textContent.trim() !== "") {
+            // 顯示訊息
+            notification.classList.add("show");
+
+            // 3秒後自動隱藏
+            setTimeout(() => {
+                notification.classList.remove("show");
+            }, 3000);
+        }
+    });
+	
+	// JavaScript 來處理顯示已選擇的選項(新增表單-適合人群)
+	document.querySelectorAll('.form-check-input').forEach(checkbox => {
+	        checkbox.addEventListener('change', () => {
+	            const selected = Array.from(document.querySelectorAll('.form-check-input:checked'))
+	                .map(input => input.value)
+	                .join(', ');
+
+	            document.getElementById('selectedOptions').textContent = selected || '未選擇任何項目';
+	        });
+	    });
+	
+    // 加載餐廳數據到編輯表單
+   function loadRestaurantData(button) {
+    // 獲取按鈕的數據屬性
+    const restaurantId = button.getAttribute('data-restaurant-id');
+    const name = button.getAttribute('data-name');
+    const address = button.getAttribute('data-address');
+    const phoneNumber = button.getAttribute('data-phone-number');
+    const cuisineType = button.getAttribute('data-cuisine-type');
+    const description = button.getAttribute('data-description');
+    const openingHours = button.getAttribute('data-opening-hours');
+    const status = button.getAttribute('data-status');
+    const priceRange = button.getAttribute('data-price-range');
+    const area = button.getAttribute('data-area');
+    const suitableFor = button.getAttribute('data-suitable-for');
+
+    // 填充編輯表單中的字段
+    document.getElementById('restaurantId').value = restaurantId;
+    document.getElementById('editName').value = name;
+    document.getElementById('editAddress').value = address;
+    document.getElementById('editPhoneNumber').value = phoneNumber;
+    document.getElementById('editCuisineType').value = cuisineType;
+    document.getElementById('editDescription').value = description;
+    document.getElementById('editOpeningHours').value = openingHours;
+    document.getElementById('editStatus').value = status;
+    document.getElementById('editPriceRange').value = priceRange;
+    document.getElementById('editArea').value = area;
+    document.getElementById('editSuitableFor').value = suitableFor;
+}
+	
+   function confirmDelete(restaurantId) {
+	    Swal.fire({
+	        title: '確定要刪除此餐廳嗎？',
+	        text: "此操作無法撤銷！",
+	        icon: 'warning',
+	        showCancelButton: true,
+	        confirmButtonColor: '#3085d6',
+	        cancelButtonColor: '#d33',
+	        confirmButtonText: '是的，刪除！',
+	        cancelButtonText: '取消'
+	    }).then((result) => {
+	        if (result.isConfirmed) {
+	            // 發送刪除請求
+	            fetch(`/restaurant/delete/${restaurantId}`, {
+	                method: 'POST'
+	            }).then(response => {
+	                if (response.ok) {
+	                    // 成功刪除後顯示成功訊息
+	                    Swal.fire(
+	                        '已刪除！',
+	                        '餐廳資料已被成功刪除。',
+	                        'success'
+	                    ).then(() => {
+	                        // 刷新頁面或移除刪除的項目
+	                        location.reload();
+	                    });
+	                } else {
+	                    // 處理錯誤情況
+	                    Swal.fire(
+	                        '錯誤！',
+	                        '無法刪除餐廳資料，請稍後再試。',
+	                        'error'
+	                    );
+	                }
+	            }).catch(error => {
+	                console.error('刪除錯誤:', error);
+	                Swal.fire(
+	                    '錯誤！',
+	                    '發生錯誤，無法刪除餐廳資料。',
+	                    'error'
+	                );
+	            });
+	        }
+	    });
+	}
+    
+    
+    
+</script>
+
+</body>
+</html>

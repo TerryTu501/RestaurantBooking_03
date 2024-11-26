@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<!--	功能說明-->
+<!--	標題與訊息：在頁面顯示「發生錯誤」的標題，並簡單說明系統無法處理請求。-->
+<!--	返回首頁：提供返回首頁的連結。-->
+<!--	錯誤訊息詳細顯示（可選）：在開發環境下可以顯示詳細的錯誤資訊，包括 status、error、message、path 等資訊。在正式環境下，建議移除此段，以避免洩露系統細節。-->
+
+<head>
+    <meta charset="UTF-8">
+    <title>發生錯誤</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f8f9fa;
+            color: #333;
+            text-align: center;
+            margin-top: 50px;
+        }
+        .error-container {
+            display: inline-block;
+            padding: 20px;
+            background-color: #fff;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            width: 80%;
+            max-width: 600px;
+        }
+        h1 {
+            font-size: 48px;
+            color: #dc3545;
+        }
+        p {
+            font-size: 16px;
+        }
+        a {
+            color: #007bff;
+            text-decoration: none;
+        }
+        a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="error-container">
+        <h1>發生錯誤</h1>
+        <p>抱歉，系統無法處理您的請求。</p>
+        <p>您可以返回<a th:href="@{/}">首頁</a>或稍後再試。</p>
+
+        <!-- 顯示詳細的錯誤訊息（開發時可以使用，正式環境請避免顯示詳細錯誤） -->
+        <p th:if="${status}" th:text="'錯誤狀態: ' + ${status}"></p>
+        <p th:if="${error}" th:text="'錯誤訊息: ' + ${error}"></p>
+        <p th:if="${message}" th:text="'詳細訊息: ' + ${message}"></p>
+        <p th:if="${path}" th:text="'發生位置: ' + ${path}"></p>
+    </div>
+</body>
+</html>
