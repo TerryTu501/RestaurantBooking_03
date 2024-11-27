@@ -1,13 +1,13 @@
 package com.booking.restaurant.controller.api;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpHeaders;
 //import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -38,6 +38,7 @@ import com.booking.restaurant.service.RestaurantService;
 @RequestMapping("/api/photos")
 public class PhotoApiController {
     private static final Logger logger = LoggerFactory.getLogger(PhotoApiController.class);
+    
     private final PhotoService photoService;
     private final RestaurantService restaurantService;
     
@@ -45,7 +46,7 @@ public class PhotoApiController {
         this.photoService = photoService;
         this.restaurantService = restaurantService;
     }
-    
+      
     /**
      * 獲取餐廳的所有照片
      */
@@ -53,6 +54,12 @@ public class PhotoApiController {
     public ResponseEntity<List<RestaurantPhotosDTO>> getRestaurantPhotos(@PathVariable Integer restaurantId) {
         try {
             List<RestaurantPhotos> photos = photoService.getRestaurantPhotos(restaurantId);
+
+            // 如果無照片，返回空的列表
+            if (photos.isEmpty()) {
+                return ResponseEntity.ok(List.of());
+            }
+
             // 將照片列表轉換為 DTO
             List<RestaurantPhotosDTO> photosDTO = photos.stream()
                 .map(photo -> new RestaurantPhotosDTO(
@@ -69,13 +76,16 @@ public class PhotoApiController {
                     photo.getUpdatedAt()
                 ))
                 .collect(Collectors.toList());
+            // **記錄獲取的照片數量**
+            logger.info("獲取照片成功，照片數量: {}", photosDTO.size());
 
             return ResponseEntity.ok(photosDTO);
         } catch (Exception e) {
-            logger.error("Error fetching restaurant photos", e);
-            return ResponseEntity.status(500).build();
+            logger.error("獲取餐廳照片失敗，餐廳ID: {}", restaurantId, e);
+            return ResponseEntity.status(500).body(null);
         }
     }
+      
     
     /**     
      * 上傳照片
@@ -108,7 +118,11 @@ public class PhotoApiController {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
-        
+       
+    
+    
+    
+    
     /**
      * 獲取指定ID的圖片(含圖片類型&描述)
      */

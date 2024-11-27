@@ -1,13 +1,12 @@
 package com.booking.restaurant.controller.api;
 
-
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-//import org.slf4j.Logger;
-//import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.configurationprocessor.json.JSONObject;
 import org.springframework.http.HttpStatus;
@@ -48,7 +47,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 @RequestMapping("/api/restaurant")
 public class RestaurantApiController {
 
-//	 private static final Logger logger = LoggerFactory.getLogger(RestaurantController.class);
+	private static final Logger logger = LoggerFactory.getLogger(RestaurantApiController.class);
+	
 	@Autowired
     private JsonWebTokenUtility jsonWebTokenUtility;
 		
@@ -117,6 +117,11 @@ public class RestaurantApiController {
                 return ResponseEntity.status(401).body(new ApiResponse("error", "無效的 Token", null));
             }
 
+            // 確保照片文件有效
+            if (photos == null || photos.isEmpty()) {
+                return ResponseEntity.status(400).body(new ApiResponse("error", "照片文件缺失", null));
+            }
+
             // 從 Token 主體中提取 ownerId
             JSONObject userJson = new JSONObject(subject);
             Integer ownerId = userJson.getInt("userId");
@@ -131,14 +136,23 @@ public class RestaurantApiController {
 
             // 保存餐廳資料
             Restaurant savedRestaurant = restaurantService.saveRestaurant(restaurant);
-
-            // 保存照片
-            restaurantPhotosService.savePhoto(savedRestaurant, photos, owner);
+            
+            // **新增餐廳成功後記錄名稱**
+            logger.info("新增餐廳，餐廳名稱: {}", savedRestaurant.getName());
+            
+            // 保存照片，處理異常
+            try {
+                restaurantPhotosService.savePhoto(savedRestaurant, photos, owner);
+            } catch (IOException e) {
+                // 照片保存失敗時返回特定錯誤信息
+                return ResponseEntity.status(400).body(new ApiResponse("error", "照片保存失敗", null));
+            }
 
             return ResponseEntity.ok(new ApiResponse("success", "餐廳資料新增成功", savedRestaurant));
         } catch (IOException e) {
+            // 捕捉 JSON 格式錯誤
             e.printStackTrace();
-            return ResponseEntity.status(400).body(new ApiResponse("error", "照片保存失敗", null));
+            return ResponseEntity.status(400).body(new ApiResponse("error", "JSON 格式錯誤", null));
         } catch (Exception e) {
             e.printStackTrace();
             return ResponseEntity.status(400).body(new ApiResponse("error", "新增餐廳失敗，請重試", null));
@@ -170,7 +184,7 @@ public class RestaurantApiController {
             return ResponseEntity.status(500).body(new ApiResponse("error", "獲取餐廳資料失敗，請重試", null));
         }
     }  
-        
+     
 //  編輯餐廳資料
     @PutMapping("/edit")
     public ResponseEntity<?> editRestaurant(

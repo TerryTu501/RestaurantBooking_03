@@ -6,4 +6,6 @@ import com.booking.restaurant.model.RestaurantPhotos;
 
 public interface RestaurantPhotosRepository extends JpaRepository<RestaurantPhotos, Integer> {
 
+	 
+	
 }
