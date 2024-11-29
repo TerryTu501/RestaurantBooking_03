@@ -42,6 +42,11 @@ public interface PhotoRepository extends JpaRepository<RestaurantPhotos, Integer
     /**
      * 查找指定餐廳的封面照片（PhotoType 為 cover，並且 IsActive 為 true）
      */
-    RestaurantPhotos findFirstByRestaurantAndPhotoTypeAndIsActive(Restaurant restaurant, String photoType, boolean isActive);
+    RestaurantPhotos findFirstByRestaurantAndPhotoTypeAndIsActive(Integer restaurantId, String photoType, boolean isActive);
+    
+
+    
+    
+    
     
 }

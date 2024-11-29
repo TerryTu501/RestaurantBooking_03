@@ -99,8 +99,19 @@ public class Restaurant {
 				+ updatedAt + "]";
 	}
 
+	private String coverPhotoUrl; // 封面照片的 URL
 
+	 // Getter
+    public String getCoverPhotoUrl() {
+        return coverPhotoUrl;
+    }
 
+    // Setter
+    public void setCoverPhotoUrl(String coverPhotoUrl) {
+        this.coverPhotoUrl = coverPhotoUrl;
+    }
+	
+	
 	// Helper methods for managing the bidirectional relationship
     public void addPhoto(RestaurantPhotos photo) {
         photos.add(photo);

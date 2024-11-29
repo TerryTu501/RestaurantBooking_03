@@ -13,6 +13,7 @@ import com.booking.restaurant.model.Restaurant;
 import com.booking.restaurant.model.RestaurantPhotos;
 import com.booking.restaurant.model.User;
 import com.booking.restaurant.repository.PhotoRepository;
+import com.booking.restaurant.repository.RestaurantRepository;
 
 @Service
 public class RestaurantPhotosService {
@@ -22,18 +23,25 @@ public class RestaurantPhotosService {
     @Autowired
     private PhotoRepository photoRepository;
 
+    @Autowired
+    private RestaurantRepository restaurantRepository;
+
     /**
      * 保存照片並更新封面
      */
-    public RestaurantPhotos savePhoto(Restaurant restaurant, MultipartFile photo, User uploadedBy) throws IOException {
+    public RestaurantPhotos savePhoto(Integer restaurantId, MultipartFile photo, User uploadedBy) throws IOException {
         // 確保照片文件有效
         if (photo == null || photo.isEmpty()) {
             throw new IOException("照片文件為空");
         }
 
+        // 查詢餐廳對象
+        Restaurant restaurant = restaurantRepository.findById(restaurantId)
+                .orElseThrow(() -> new IOException("餐廳不存在，ID: " + restaurantId));
+
         // 獲取現有封面照片
         RestaurantPhotos existingCoverPhoto = photoRepository
-                .findFirstByRestaurantAndPhotoTypeAndIsActive(restaurant, "cover", true);
+                .findFirstByRestaurantAndPhotoTypeAndIsActive(restaurantId, "cover", true);
 
         if (existingCoverPhoto != null) {
             // 更新現有照片
@@ -65,6 +73,12 @@ public class RestaurantPhotosService {
         logger.info("照片保存成功，照片名稱: {}", photo.getOriginalFilename());
 
         return photoRepository.save(restaurantPhoto);
+    }
+
+    
+    // 取得單一餐廳照片
+    public RestaurantPhotos findCoverPhotoByRestaurantId(Integer restaurantId) {
+        return photoRepository.findFirstByRestaurantAndPhotoTypeAndIsActive(restaurantId, "cover", true);
     }
     
     /**
